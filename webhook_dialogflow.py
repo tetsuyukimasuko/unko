@@ -21,7 +21,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 app = Flask(__name__)
 
 
-@app.route('/', methods=['POST'])
+@app.route('/webhook', methods=['POST'])
 def webhook():
 	req = request.get_json(silent=True, force=True)
 	result = req.get("result")
@@ -63,8 +63,4 @@ def webhook():
 
 if __name__ == '__main__':
 	
-	port = int(os.getenv('PORT', 5000))
-
-	print("Starting app on port %d" % port)
-
-	app.run(debug=False, port=port, host='0.0.0.0')
+	app.run(debug=True, host='0.0.0.0')
