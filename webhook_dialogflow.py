@@ -21,7 +21,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 app = Flask(__name__)
 
 
-@app.route('/webhook', methods=['POST'])
+@app.route('/', methods=['POST'])
 def webhook():
 	req = request.get_json(silent=True, force=True)
 	result = req.get("result")
