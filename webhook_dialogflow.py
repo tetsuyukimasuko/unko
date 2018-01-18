@@ -28,18 +28,16 @@ def webhook():
 	parameters = result.get("parameters")
 	event_date = parameters.get("Event_date")
 	now=datetime.datetime.now()
-
 	if event_date=='today':
 		event_date= str(now.year)+"年"+str(now.month)+"月"+str(now.day)+"日"
 	elif event_date=='tomorrow':
 		event_date= str(now.year)+"年"+str(now.month)+"月"+str(now.day+1)+"日"
-
 	text =event_date
 	r = make_response(jsonify({'speech':text,'displayText':text}))
 	r.headers['Content-Type'] = 'application/json'
-
 	return r
 
 if __name__ == '__main__':
-	
-	app.run(debug=False, host='0.0.0.0')
+    port = int(os.getenv('PORT', 5000))
+    print("Starting app on port %d" % port)
+    app.run(debug=False, port=port, host='0.0.0.0')
