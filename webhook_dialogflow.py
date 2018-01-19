@@ -48,10 +48,12 @@ def webhook():
 			else:
 				text = str(worksheet.cell(cl.row,1).value) + "が" + str(worksheet.cell(cl.row,3).value)+"であります。"
 
-		r = make_response(jsonify({'speech':text,'displayText':text}))
-		r.headers['Content-Type'] = 'application/json'
 	except:
 		text=event_date+'のイベントは見つかりませんでした。'
+	
+	r = make_response(jsonify({'speech':text,'displayText':text}))
+	r.headers['Content-Type'] = 'application/json'
+	
 	return r
 
 if __name__ == '__main__':
