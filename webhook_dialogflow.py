@@ -40,15 +40,15 @@ def webhook():
     # # 共有設定したスプレッドシートの名前を指定する
 	worksheet = gc.open("Event_Info").sheet1
 	text=""
-	try:
-		cell = worksheet.findall(event_date)
+	cell = worksheet.findall(event_date)
+	if len(cell) > 0:
 		for cl in cell:
 			if text!="":
 				text += "また、"+str(worksheet.cell(cl.row,1).value) + "が" + str(worksheet.cell(cl.row,3).value)+"であります。"
 			else:
 				text = str(worksheet.cell(cl.row,1).value) + "が" + str(worksheet.cell(cl.row,3).value)+"であります。"
 
-	except:
+	else:
 		text=event_date+'のイベントは見つかりませんでした。'
 	
 	r = make_response(jsonify({'speech':text,'displayText':text}))
