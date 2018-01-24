@@ -49,13 +49,18 @@ def webhook():
 		for cl in cell:
 			
 			title=str(worksheet.cell(cl.row,1).value)
-			place=str(worksheet.cell(cl.row,3).value)
+			place=str(worksheet.cell(cl.row,4).value)
+			timestamp=str(worksheet.cell(cl.row,3).value)
+			if timestamp=="-":
+				tmp=place +"で"+title+"があります。"
+			else:
+				tmp=place +"で"+timestamp+"から"+title+"があります。"
 			
 			if text!="":
-				text += "また、"+  place +"で"+title+"があります。"
+				text += "また、"+ tmp
 
 			else:
-				text = speak_date + "は、" +place +"で"+title+"があります。"
+				text = speak_date + "は、" +tmp
 
 	else:
 		text=speak_date+'のイベントは見つかりませんでした。'
