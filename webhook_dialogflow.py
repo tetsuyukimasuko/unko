@@ -31,25 +31,34 @@ def webhook():
 
 	if event_date=='today':
 		event_date= str(now.year)+"年"+str(now.month)+"月"+str(now.day)+"日"
+		speak_date="今日"
 	elif event_date=='tomorrow':
 		event_date= str(now.year)+"年"+str(now.month)+"月"+str(now.day+1)+"日"
+		speak_date="明日"
 	scope = ['https://www.googleapis.com/auth/drive']
+	
     #ダウンロードしたjsonファイルを同じフォルダに格納して指定する
 	credentials = ServiceAccountCredentials.from_json_keyfile_name('My First Project-fc3744a8d618.json', scope)
 	gc = gspread.authorize(credentials)
     # # 共有設定したスプレッドシートの名前を指定する
 	worksheet = gc.open("Event_Info").sheet1
 	text=""
-	cell = worksheet.findall(event_date)
+	cell = worksheet.findall(event_date)	
+	
 	if len(cell) > 0:
 		for cl in cell:
+			
+			title=str(worksheet.cell(cl.row,1).value)
+			place=str(worksheet.cell(cl.row,3).value)
+			
 			if text!="":
-				text += "また、"+str(worksheet.cell(cl.row,1).value) + "が" + str(worksheet.cell(cl.row,3).value)+"であります。"
+				text += "また、"+  place +"で"+title+"があります。"
+
 			else:
-				text = str(worksheet.cell(cl.row,1).value) + "が" + str(worksheet.cell(cl.row,3).value)+"であります。"
+				text = speak_date + "は、" place +"で"+title+"があります。"
 
 	else:
-		text=event_date+'のイベントは見つかりませんでした。'
+		text=speak_date+'のイベントは見つかりませんでした。'
 	
 	r = make_response(jsonify({'speech':text,'displayText':text}))
 	r.headers['Content-Type'] = 'application/json'
