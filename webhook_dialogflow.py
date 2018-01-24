@@ -55,7 +55,7 @@ def webhook():
 				text += "また、"+  place +"で"+title+"があります。"
 
 			else:
-				text = speak_date + "は、" place +"で"+title+"があります。"
+				text = speak_date + "は、" +place +"で"+title+"があります。"
 
 	else:
 		text=speak_date+'のイベントは見つかりませんでした。'
