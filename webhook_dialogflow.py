@@ -65,7 +65,7 @@ def webhook():
 	else:
 		text=speak_date+'のイベントは見つかりませんでした。'
 	
-	r = make_response(jsonify({'speech':text,'displayText':text}))
+	r = make_response(jsonify({'speech':text,'displayText':text,'data': {'google': {'expect_user_response': false, 'no_input_prompts': [],'is_ssml': false}}}))
 	r.headers['Content-Type'] = 'application/json'
 	
 	return r
