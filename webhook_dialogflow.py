@@ -68,7 +68,7 @@ def webhook():
 	#google_data={"expect_user_response": false,"no_input_prompts": [],"is_ssml": false}
 	#json_data={"google": google_data}
 	
-	r = make_response(jsonify({'speech':text,'displayText':text,'data':{'text':text}}))
+	r = make_response(jsonify({'speech':text,'displayText':text,'data':{'google':{'expect_user_response':false}}}))
 	r.headers['Content-Type'] = 'application/json'
 	
 	return r
