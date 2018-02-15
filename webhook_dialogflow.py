@@ -27,6 +27,11 @@ def webhook():
 	result = req.get("result")
 	parameters = result.get("parameters")
 	event_date = parameters.get("Event_date")
+	try:
+		place_query=parameters.get('Place')
+	except:
+		place_query=''
+		
 	now=datetime.datetime.now()
 
 	if event_date=='today':
