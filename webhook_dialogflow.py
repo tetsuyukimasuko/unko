@@ -55,20 +55,26 @@ def webhook():
 			
 			title=str(worksheet.cell(cl.row,1).value)
 			place=str(worksheet.cell(cl.row,4).value)
+			region=str(worksheet.cell(cl.row,10).value)
 			timestamp=str(worksheet.cell(cl.row,3).value)
-			if timestamp=="-":
-				tmp=place +"で"+title+"があります。"
-			else:
-				tmp=place +"で"+timestamp+"から"+title+"があります。"
 			
-			if text!="":
-				text += "また、"+ tmp
+			if place_query==region:
+			
+				if timestamp=="-":
+					tmp=place +"で"+title+"があります。"
+				else:
+					tmp=place +"で"+timestamp+"から"+title+"があります。"
 
-			else:
-				text = speak_date + "は、" +tmp
+				if text!="":
+					text += "また、"+ tmp
+
+				else:
+					text = speak_date + "は、" +tmp
 
 	else:
-		text=speak_date+'のイベントは見つかりませんでした。'
+		text='指定した条件でのイベントは見つかりませんでした。'
+		#TODO
+		#一番近いイベントを一つ紹介する
 	
 	#google_data={"expect_user_response": false,"no_input_prompts": [],"is_ssml": false}
 	#json_data={"google": google_data}
