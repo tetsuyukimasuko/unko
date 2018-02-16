@@ -75,7 +75,7 @@ def webhook():
 					text += "また、"+ tmp
 				else:
 					text = speak_date + "は、" +tmp				
-	else:
+	if text=="":
 		text='指定した条件でのイベントは見つかりませんでした。'
 		#TODO
 		#一番近いイベントを一つ紹介する
