@@ -76,7 +76,7 @@ def webhook():
 				else:
 					text = speak_date + "は、" +tmp				
 	if text=="":
-		if place_query='':
+		if place_query=='':
 			text='その日はイベントはありません。近いひにちだと、'
 		else:
 			text='その日、指定した地区でのイベントはありません。近いひにちだと、'
