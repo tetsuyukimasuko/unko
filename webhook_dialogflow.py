@@ -76,7 +76,10 @@ def webhook():
 				else:
 					text = speak_date + "は、" +tmp				
 	if text=="":
-		text='その日はイベントはありません。近いひにちだと、'
+		if place_query='':
+			text='その日はイベントはありません。近いひにちだと、'
+		else:
+			text='その日、指定した地区でのイベントはありません。近いひにちだと、'
 		#TODO
 		#一番近いイベントを一つ紹介する
 		date_list=worksheet.col_values(2)
