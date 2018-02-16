@@ -66,7 +66,7 @@ def webhook():
 				else:
 					text = speak_date + "は、" +tmp
 					
-			elif place_query=='':
+			elif place_query=='' or place_query=='All':
 				if timestamp=="-":
 					tmp=place +"で"+title+"があります。"
 				else:
@@ -76,10 +76,28 @@ def webhook():
 				else:
 					text = speak_date + "は、" +tmp				
 	if text=="":
-		text='指定した条件でのイベントは見つかりませんでした。'
+		text='その日はイベントはありません。近い日にちだと、'
 		#TODO
 		#一番近いイベントを一つ紹介する
-	
+		date_list=worksheet.col_values(2)
+		for j in range(2,len(date_list)):
+			#datetimeに変換
+			dt_format=datetime.strptime(date_list[j],'%Y年%m月%d日')
+			if now<dt_format:
+				break
+		title=str(worksheet.cell(j,1).value)
+		place=str(worksheet.cell(j,4).value)
+		region=str(worksheet.cell(j,10).value)
+		timestamp=str(worksheet.cell(j,3).value)
+		
+		text= text+str(date_list[j].month)+"月"+str(date_list[j].day)+"日に"
+		
+		if timestamp=="-":
+			text=text+place +"で"+title+"があります。"
+		else:
+			text=text +place+"で"+timestamp+"から"+title+"があります。"
+					
+					
 	#google_data={"expect_user_response": false,"no_input_prompts": [],"is_ssml": false}
 	#json_data={"google": google_data}
 	
