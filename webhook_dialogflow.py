@@ -27,10 +27,8 @@ def webhook():
 	result = req.get("result")
 	parameters = result.get("parameters")
 	event_date = parameters.get("Event_date")
-	try:
-		place_query=parameters.get('Place')
-	except:
-		place_query=''
+	place_query=parameters.get("Place")
+
 		
 	now=datetime.datetime.now()
 
@@ -58,19 +56,25 @@ def webhook():
 			region=str(worksheet.cell(cl.row,10).value)
 			timestamp=str(worksheet.cell(cl.row,3).value)
 			
-			if place_query==region:
-			
+			if place_query!='' and place_query==region:
 				if timestamp=="-":
 					tmp=place +"で"+title+"があります。"
 				else:
 					tmp=place +"で"+timestamp+"から"+title+"があります。"
-
 				if text!="":
 					text += "また、"+ tmp
-
 				else:
 					text = speak_date + "は、" +tmp
-
+					
+			elif place_query=='':
+				if timestamp=="-":
+					tmp=place +"で"+title+"があります。"
+				else:
+					tmp=place +"で"+timestamp+"から"+title+"があります。"
+				if text!="":
+					text += "また、"+ tmp
+				else:
+					text = speak_date + "は、" +tmp				
 	else:
 		text='指定した条件でのイベントは見つかりませんでした。'
 		#TODO
