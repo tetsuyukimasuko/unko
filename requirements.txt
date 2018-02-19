@@ -3,3 +3,5 @@ future==0.16.0
 urllib3==1.21.1
 oauth2client==4.1.2
 gspread==0.6.2
+pandas==0.20.3
+gspread-dataframe==2.1.0
