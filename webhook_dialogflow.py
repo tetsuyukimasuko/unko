@@ -28,7 +28,7 @@ def webhook():
 	parameters = result.get("parameters")
 	event_date = parameters.get("Event_date")
 	place_query=parameters.get("Place")
-
+	Event_Found=False
 		
 	now=datetime.datetime.now()
 
@@ -77,9 +77,9 @@ def webhook():
 					text = speak_date + "は、" +tmp				
 	if text=="":
 		if place_query=='':
-			text='その日はイベントはありません。近いひにちだと、'
+			text='その日はイベントはありません。'
 		else:
-			text='その日、指定した地区でのイベントはありません。近いひにちだと、'
+			text='その日、指定した地区でのイベントはありません。'
 		#TODO
 		#一番近いイベントを一つ紹介する
 		date_list=worksheet.col_values(2)
@@ -87,18 +87,27 @@ def webhook():
 			#datetimeに変換
 			dt_format=datetime.datetime.strptime(date_list[j],'%Y年%m月%d日')
 			if now<dt_format:
-				break
-		title=str(worksheet.cell(j,1).value)
-		place=str(worksheet.cell(j,4).value)
-		region=str(worksheet.cell(j,10).value)
-		timestamp=str(worksheet.cell(j,3).value)
-		
-		text= text+str(dt_format.month)+"月"+str(dt_format.day)+"日に"
-		
-		if timestamp=="-":
-			text=text+place +"で"+title+"があります。"
+				if place_query=='':
+					Event_Found=True
+					break
+				else:
+					if place_query==str(worksheet.cell(j,10).value):
+						Event_Found=True
+						break
+		if Event_Found==False:
+			text=text+'ホームページの更新をお待ちください。'
 		else:
-			text=text +place+"で"+timestamp+"から"+title+"があります。"
+			title=str(worksheet.cell(j,1).value)
+			place=str(worksheet.cell(j,4).value)
+			region=str(worksheet.cell(j,10).value)
+			timestamp=str(worksheet.cell(j,3).value)
+
+			text= text+'近い日にちだと、'+str(dt_format.month)+"月"+str(dt_format.day)+"日に"
+
+			if timestamp=="-":
+				text=text+'近い日にちだと、'+place +"で"+title+"があります。"
+			else:
+				text=text +'近い日にちだと、'+place+"で"+timestamp+"から"+title+"があります。"
 					
 					
 	#google_data={"expect_user_response": false,"no_input_prompts": [],"is_ssml": false}
