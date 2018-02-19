@@ -32,12 +32,9 @@ def webhook():
 	parameters = result.get("parameters")
 	event_date = parameters.get("Event_date")
 	place_query=parameters.get("Place")
+	date_query=parameters.get("date")
 		
 	now=datetime.datetime.now()
-	
-	#日付情報がなければデフォルトでtodayを入れる
-	if event_date=='':
-		event_date='today'
 
 	if event_date=='today':
 		event_date= str(now.year)+"年"+str(now.month)+"月"+str(now.day)+"日"
@@ -45,6 +42,15 @@ def webhook():
 	elif event_date=='tomorrow':
 		event_date= str(now.year)+"年"+str(now.month)+"月"+str(now.day+1)+"日"
 		speak_date="明日"
+	elif event_date=='' :
+		if date_query=='':
+			event_date= str(now.year)+"年"+str(now.month)+"月"+str(now.day)+"日"
+			speak_date="今日"			
+		else:
+			dt_format=datetime.datetime.strptime(date_query,'%Y-%m-%d')
+			event_date= str(dt_format.year)+"年"+str(dt_format.month)+"月"+str(dt_format.day)+"日"
+			speak_date=str(dt_format.month)+"月"+str(dt_format.day)+"日"			
+			
 	scope = ['https://www.googleapis.com/auth/drive']
 	
     #ダウンロードしたjsonファイルを同じフォルダに格納して指定する
