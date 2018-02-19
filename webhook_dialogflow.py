@@ -34,6 +34,10 @@ def webhook():
 	place_query=parameters.get("Place")
 		
 	now=datetime.datetime.now()
+	
+	#日付情報がなければデフォルトでtodayを入れる
+	if event_date=='':
+		event_date='today'
 
 	if event_date=='today':
 		event_date= str(now.year)+"年"+str(now.month)+"月"+str(now.day)+"日"
