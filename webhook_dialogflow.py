@@ -149,28 +149,32 @@ def webhook():
 			dt_format_query=datetime.datetime.strptime(event_date,'%Y年%m月%d日')
 			#listの長さがあった場合
 			if len(date_list)>0:
+				Founded=False
 				for j in range(1,len(date_list)):
 					#datetimeに変換
 					dt_format=datetime.datetime.strptime(date_list[j],'%Y年%m月%d日')
 					
 					if dt_format_query<dt_format:
 						df_filtered=df_filtered[df_filtered['日付'].isin([date_list[j]])]
+						Founded=True
 						break
-				
-				length=len(df_filtered.index)
-				titles=df_filtered['イベント名'].values.tolist()
-				places=df_filtered['場所'].values.tolist()
-				timestamps=df_filtered['時間'].values.tolist()
-				regions=df_filtered['地区'].values.tolist()
-				text='その日、指定した地区ではイベントはありません。近い日にちだと、'+str(date_list[j]).replace('2018年','')+'に'
+				if Founded:
+					length=len(df_filtered.index)
+					titles=df_filtered['イベント名'].values.tolist()
+					places=df_filtered['場所'].values.tolist()
+					timestamps=df_filtered['時間'].values.tolist()
+					regions=df_filtered['地区'].values.tolist()
+					text='その日、指定した地区ではイベントはありません。近い日にちだと、'+str(date_list[j]).replace('2018年','')+'に'
 
-				for i in range(length):
-					if i>0:
-						text=text+'また、'
-					if timestamps[i]=='-':
-						text=text+places[i] +"で"+titles[i]+"があります。"
-					else:
-						text=text+places[i] +"で"+timestamps[i]+"から"+titles[i]+"があります。"
+					for i in range(length):
+						if i>0:
+							text=text+'また、'
+						if timestamps[i]=='-':
+							text=text+places[i] +"で"+titles[i]+"があります。"
+						else:
+							text=text+places[i] +"で"+timestamps[i]+"から"+titles[i]+"があります。"
+				else:
+					text='すみません。あまり先の日程まではわかりません。'
 			#日付が見つからなかった場合
 			else:
 				text='しばらく、指定した地区ではイベントはありません。ホームページの更新をお待ちください。'
