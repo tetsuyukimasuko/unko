@@ -119,7 +119,7 @@ def webhook():
 						text=text+places[i] +"で"+timestamps[i]+"から"+titles[i]+"があります。"
 
 			else:
-				text='あまり先の日程まではわかりません。'
+				text='すみません。あまり先の日程まではわかりません。'
 
 	#地区の指定があった場合は地区でもフィルタリングする
 	elif place_query!='':
