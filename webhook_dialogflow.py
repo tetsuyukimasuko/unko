@@ -105,9 +105,9 @@ def webhook():
 			text= text+'近い日にちだと、'+str(dt_format.month)+"月"+str(dt_format.day)+"日に"
 
 			if timestamp=="-":
-				text=text+'近い日にちだと、'+place +"で"+title+"があります。"
+				text=text+place +"で"+title+"があります。"
 			else:
-				text=text +'近い日にちだと、'+place+"で"+timestamp+"から"+title+"があります。"
+				text=text +place+"で"+timestamp+"から"+title+"があります。"
 					
 					
 	#google_data={"expect_user_response": false,"no_input_prompts": [],"is_ssml": false}
