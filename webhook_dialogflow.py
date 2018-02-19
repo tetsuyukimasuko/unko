@@ -16,6 +16,9 @@ from flask import make_response, jsonify
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+import pandas as pd
+from gspread_dataframe import get_as_dataframe
+
 
 # Flask app should start in global layout
 app = Flask(__name__)
@@ -23,12 +26,12 @@ app = Flask(__name__)
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
+	
 	req = request.get_json(silent=True, force=True)
 	result = req.get("result")
 	parameters = result.get("parameters")
 	event_date = parameters.get("Event_date")
 	place_query=parameters.get("Place")
-	Event_Found=False
 		
 	now=datetime.datetime.now()
 
@@ -43,80 +46,129 @@ def webhook():
     #ダウンロードしたjsonファイルを同じフォルダに格納して指定する
 	credentials = ServiceAccountCredentials.from_json_keyfile_name('My First Project-fc3744a8d618.json', scope)
 	gc = gspread.authorize(credentials)
-    # # 共有設定したスプレッドシートの名前を指定する
-	worksheet = gc.open("Event_Info").sheet1
-	text=""
-	cell = worksheet.findall(event_date)	
 	
-	if len(cell) > 0:
-		for cl in cell:
-			
-			title=str(worksheet.cell(cl.row,1).value)
-			place=str(worksheet.cell(cl.row,4).value)
-			region=str(worksheet.cell(cl.row,10).value)
-			timestamp=str(worksheet.cell(cl.row,3).value)
-			
-			if place_query==region:
-				if timestamp=="-":
-					tmp=place +"で"+title+"があります。"
+	# # 共有設定したスプレッドシートの名前を指定する
+	worksheet = gc.open("Event_Info").sheet1
+
+	#dataframeにする
+	df = get_as_dataframe(worksheet, parse_dates=False,index=None)
+
+
+	#TODO ここから下はdataframeとして操作
+	text=""
+
+	#event_dateしかなかった場合は、日付のみでフィルタリングする
+	#または、All Areaでもこの条件を使う。
+	if place_query=='' or place_query=='All':
+		df_filtered=df[df['日付'].isin([event_date])]
+		length=len(df_filtered.index)
+		
+		#指定した日付のピタリ賞があった場合
+		if length>0:
+			titles=df_filtered['イベント名'].values.tolist()
+			places=df_filtered['場所'].values.tolist()
+			timestamps=df_filtered['時間'].values.tolist()
+			regions=df_filtered['地区'].values.tolist()
+			text=speak_date+'は、'
+
+			for i in range(length):
+				if i>0:
+					text=text+'また、'
+				if timestamps[i]=='-':
+					text=text+places[i] +"で"+titles[i]+"があります。"
 				else:
-					tmp=place +"で"+timestamp+"から"+title+"があります。"
-				if text!="":
-					text += "また、"+ tmp
-				else:
-					text = speak_date + "は、" +tmp
-					
-			elif place_query=='' or place_query=='All':
-				if timestamp=="-":
-					tmp=place +"で"+title+"があります。"
-				else:
-					tmp=place +"で"+timestamp+"から"+title+"があります。"
-				if text!="":
-					text += "また、"+ tmp
-				else:
-					text = speak_date + "は、" +tmp				
-	if text=="":
-		if place_query=='':
-			text='その日はイベントはありません。'
+					text=text+places[i] +"で"+timestamps[i]+"から"+titles[i]+"があります。"
+	
+		#なかった場合、一番近いものを持ってくる
 		else:
-			text='その日、指定した地区でのイベントはありません。'
-		#TODO
-		#一番近いイベントを一つ紹介する
-		date_list=worksheet.col_values(2)
-		for j in range(1,len(date_list)):
-			#datetimeに変換
-			dt_format=datetime.datetime.strptime(date_list[j],'%Y年%m月%d日')
-			if now<dt_format:
-				if place_query=='':
-					Event_Found=True
-					break
-				else:
-					if place_query==str(worksheet.cell(j,10).value):
-						Event_Found=True
+
+			date_list=df['日付'].values.tolist()
+
+			if len(date_list)>0:
+				for j in range(1,len(date_list)):
+					#datetimeに変換
+					dt_format=datetime.datetime.strptime(date_list[j],'%Y年%m月%d日')
+					if now<dt_format:
+						df_filtered=df[df['日付'].isin([date_list[j]])]
 						break
-		if Event_Found==False:
-			text=text+'ホームページの更新をお待ちください。'
-		else:
-			title=str(worksheet.cell(j,1).value)
-			place=str(worksheet.cell(j,4).value)
-			region=str(worksheet.cell(j,10).value)
-			timestamp=str(worksheet.cell(j,3).value)
+				
+				length=len(df_filtered.index)
+				titles=df_filtered['イベント名'].values.tolist()
+				places=df_filtered['場所'].values.tolist()
+				timestamps=df_filtered['時間'].values.tolist()
+				regions=df_filtered['地区'].values.tolist()
+				text='その日はイベントはありません。近い日にちだと、'+str(date_list[j]).replace('2018年')+'に'
 
-			text= text+'近い日にちだと、'+str(dt_format.month)+"月"+str(dt_format.day)+"日に"
+				for i in range(length):
+					if i>0:
+						text=text+'また、'
+					if timestamps[i]=='-':
+						text=text+places[i] +"で"+titles[i]+"があります。"
+					else:
+						text=text+places[i] +"で"+timestamps[i]+"から"+titles[i]+"があります。"
 
-			if timestamp=="-":
-				text=text+place +"で"+title+"があります。"
 			else:
-				text=text +place+"で"+timestamp+"から"+title+"があります。"
-					
-					
-	#google_data={"expect_user_response": false,"no_input_prompts": [],"is_ssml": false}
-	#json_data={"google": google_data}
+				text='しばらくイベントはないようです。ホームページの更新をお待ちください。'
+
+	#地区の指定があった場合は地区でもフィルタリングする
+	elif place_query!='':
+		df_filtered=df[df['日付'].isin([event_date])]
+		df_filtered=df_filtered[df_filtered['地区'].isin([place_query,'All Area'])]
+		length=len(df_filtered.index)
+		#指定した日付と地区のピタリ賞があった場合
+		if length>0:
+			titles=df_filtered['イベント名'].values.tolist()
+			places=df_filtered['場所'].values.tolist()
+			timestamps=df_filtered['時間'].values.tolist()
+			regions=df_filtered['地区'].values.tolist()
+			text=speak_date+'は、'
+
+			for i in range(length):
+				if i>0:
+					text=text+'また、'
+				if timestamps[i]=='-':
+					text=text+places[i] +"で"+titles[i]+"があります。"
+				else:
+					text=text+places[i] +"で"+timestamps[i]+"から"+titles[i]+"があります。"
+	
+		#なかった場合、一番近いものを持ってくる
+		else:
+			df_filtered=df[df['地区'].isin([place_query])]
+			date_list=df_filtered['日付'].values.tolist()
+
+			#listの長さがあった場合
+			if len(date_list)>0:
+				for j in range(1,len(date_list)):
+					#datetimeに変換
+					dt_format=datetime.datetime.strptime(date_list[j],'%Y年%m月%d日')
+					if now<dt_format:
+						df_filtered=df_filtered[df_filtered['日付'].isin([date_list[j]])]
+						break
+				
+				length=len(df_filtered.index)
+				titles=df_filtered['イベント名'].values.tolist()
+				places=df_filtered['場所'].values.tolist()
+				timestamps=df_filtered['時間'].values.tolist()
+				regions=df_filtered['地区'].values.tolist()
+				text='その日、指定した地区ではイベントはありません。近い日にちだと、'+str(date_list[j]).replace('2018年','')+'に'
+
+				for i in range(length):
+					if i>0:
+						text=text+'また、'
+					if timestamps[i]=='-':
+						text=text+places[i] +"で"+titles[i]+"があります。"
+					else:
+						text=text+places[i] +"で"+timestamps[i]+"から"+titles[i]+"があります。"
+			#日付が見つからなかった場合
+			else:
+				text='しばらく、指定した地区ではイベントはありません。ホームページの更新をお待ちください。'
+	
 	
 	r = make_response(jsonify({'speech':text,'displayText':text,'data':{'google':{'expect_user_response':False,'no_input_prompts':[],'is_ssml':False}}}))
 	r.headers['Content-Type'] = 'application/json'
 	
 	return r
+
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
