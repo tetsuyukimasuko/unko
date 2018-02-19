@@ -98,7 +98,8 @@ def webhook():
 				for j in range(1,len(date_list)):
 					#datetimeに変換
 					dt_format=datetime.datetime.strptime(date_list[j],'%Y年%m月%d日')
-					if now<dt_format:
+					dt_format_query=datetime.datetime.strptime(event_date,'%Y年%m月%d日')
+					if dt_format_query<dt_format:
 						df_filtered=df[df['日付'].isin([date_list[j]])]
 						break
 				
@@ -151,7 +152,8 @@ def webhook():
 				for j in range(1,len(date_list)):
 					#datetimeに変換
 					dt_format=datetime.datetime.strptime(date_list[j],'%Y年%m月%d日')
-					if now<dt_format:
+					dt_format_query=datetime.datetime.strptime(event_date,'%Y年%m月%d日')
+					if dt_format_query<dt_format:
 						df_filtered=df_filtered[df_filtered['日付'].isin([date_list[j]])]
 						break
 				
