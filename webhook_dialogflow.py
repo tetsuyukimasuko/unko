@@ -112,7 +112,7 @@ def webhook():
 				places=df_filtered['場所'].values.tolist()
 				timestamps=df_filtered['時間'].values.tolist()
 				regions=df_filtered['地区'].values.tolist()
-				text='その日はイベントはありません。近い日にちだと、'+str(date_list[j]).replace('2018年','')+'に'
+				text=speak_date+'はイベントはありません。近い日にちだと、'+str(date_list[j]).replace('2018年','')+'に'
 
 				for i in range(length):
 					if i>0:
