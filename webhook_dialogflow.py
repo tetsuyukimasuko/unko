@@ -179,6 +179,15 @@ def webhook():
 			else:
 				text='しばらく、指定した地区ではイベントはありません。ホームページの更新をお待ちください。'
 	
+	#テキストを加工する。かっこが入っているものを消す
+	try:
+		text=text.replace('(いまいずみだい)','')
+	except:
+		pass
+	try:
+		text=text.replace('(おおひらやま)','')
+	except:
+		pass
 	
 	r = make_response(jsonify({'speech':text,'displayText':text,'data':{'google':{'expect_user_response':False,'no_input_prompts':[],'is_ssml':False}}}))
 	r.headers['Content-Type'] = 'application/json'
