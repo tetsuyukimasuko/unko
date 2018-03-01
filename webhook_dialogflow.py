@@ -26,14 +26,18 @@ app = Flask(__name__)
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
-	
+	'''
 	req = request.get_json(silent=True, force=True)
 	result = req.get("result")
 	parameters = result.get("parameters")
 	event_date = parameters.get("Event_date")
 	place_query=parameters.get("Place")
 	date_query=parameters.get("date")
-		
+	'''
+	event_date = 'today'
+	place_query=''
+	date_query=''	
+	
 	now=datetime.datetime.now()
 
 	if event_date=='today':
