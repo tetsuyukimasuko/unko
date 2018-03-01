@@ -190,6 +190,8 @@ def webhook():
 		pass
 	try:
 		text=text.replace('町内会館','ちょーなぃかぃかん')
+	except:
+		pass
 	
 	r = make_response(jsonify({'speech':text,'displayText':text,'data':{'google':{'expect_user_response':False,'no_input_prompts':[],'is_ssml':False}}}))
 	r.headers['Content-Type'] = 'application/json'
