@@ -92,7 +92,7 @@ def webhook():
 					text=text+places[i] +"で"+titles[i]+"があります。"
 				else:
 					text=text+places[i] +"で"+timestamps[i]+"から"+titles[i]+"があります。"
-	
+			text=text+'外に出かけてみてはいかがでしょうか。'
 		#なかった場合、一番近いものを持ってくる
 		else:
 			Founded=False
@@ -121,7 +121,7 @@ def webhook():
 						text=text+places[i] +"で"+titles[i]+"があります。"
 					else:
 						text=text+places[i] +"で"+timestamps[i]+"から"+titles[i]+"があります。"
-
+				text=text+'外に出かけてみてはいかがでしょうか。'
 			else:
 				text='すみません。あまり先の日程まではわかりません。'
 
