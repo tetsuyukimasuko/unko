@@ -58,7 +58,7 @@ def webhook():
 	scope = ['https://www.googleapis.com/auth/drive']
 	
     #ダウンロードしたjsonファイルを同じフォルダに格納して指定する
-	credentials = ServiceAccountCredentials.from_json_keyfile_name('My First Project-fc3744a8d618.json', scope)
+	credentials = ServiceAccountCredentials.from_json_keyfile_name('My First Project-29887af967a6.json', scope)
 	gc = gspread.authorize(credentials)
 	
 	# # 共有設定したスプレッドシートの名前を指定する
