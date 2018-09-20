@@ -1,17 +1,17 @@
 from __future__ import print_function
 from future.standard_library import install_aliases
 install_aliases()
-"""
+
 from urllib.parse import urlparse, urlencode
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
-"""
+
 from flask import Flask
 from flask import request
 from flask import make_response, jsonify
 import os
 import requests
-"""
+
 #Add
 #from cek_sdk import RequestHandler
 import datetime
@@ -20,7 +20,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 import pandas as pd
 from gspread_dataframe import get_as_dataframe
-"""
+
 # Flask app should start in global layout
 app = Flask(__name__)
 
@@ -29,7 +29,7 @@ app = Flask(__name__)
 @app.route('/',methods=['GET'])
 def index():
 	return 'Hello World!'
-"""
+
 @app.route('/event_search', methods=['POST'])
 def event_search():
 	req = request.get_json(silent=True, force=True)
@@ -202,7 +202,7 @@ def event_search():
 	r.headers['Content-Type'] = 'application/json'
 	
 	return r
-"""
+
 if __name__ == '__main__':
 	port = int(os.getenv('PORT', 5000))
 	app.run(debug=False, port=port, host='0.0.0.0')
