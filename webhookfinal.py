@@ -40,6 +40,11 @@ def event_search():
 	date_query = parameters.get("date")
 
 	now = datetime.datetime.now()
+	
+	#強制的に今日のイベントにする
+	event_date='today'
+	place_query=''
+	date_query=''
 
 	if event_date == 'today':
 		event_date = str(now.year) + "年" + str(now.month) + "月" + str(now.day) + "日"
