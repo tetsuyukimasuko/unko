@@ -24,11 +24,11 @@ app = Flask(__name__)
 
 @app.route('/',methods=['GET'])
 def index():
-    return 'Hello World!'
+	return 'Hello World!'
 
 @app.route('/event_search', methods=['POST'])
 def event_search():
-	
+
 	req = request.get_json(silent=True, force=True)
 	result = req.get("result")
 	parameters = result.get("parameters")
@@ -52,13 +52,13 @@ def event_search():
 			dt_format = datetime.datetime.strptime(date_query,'%Y-%m-%d')
 			event_date = str(dt_format.year) + "年" + str(dt_format.month) + "月" + str(dt_format.day) + "日"
 			speak_date = str(dt_format.month) + "月" + str(dt_format.day) + "日"			
-			
+
 	scope = ['https://www.googleapis.com/auth/drive']
-	
-    #ダウンロードしたjsonファイルを同じフォルダに格納して指定する
+
+	#ダウンロードしたjsonファイルを同じフォルダに格納して指定する
 	credentials = ServiceAccountCredentials.from_json_keyfile_name('EventScraper-d56f51f0aa3c.json', scope)
 	gc = gspread.authorize(credentials)
-	
+
 	# # 共有設定したスプレッドシートの名前を指定する
 	worksheet = gc.open("Event_Info").sheet1
 
@@ -74,7 +74,7 @@ def event_search():
 	if place_query == '' or place_query == 'All':
 		df_filtered = df[df['日付'].isin([event_date])]
 		length = len(df_filtered.index)
-		
+
 		#指定した日付のピタリ賞があった場合
 		if length > 0:
 			titles = df_filtered['イベント名'].values.tolist()
@@ -143,7 +143,7 @@ def event_search():
 					text = text + places[i] + "で" + titles[i] + "があります。"
 				else:
 					text = text + places[i] + "で" + timestamps[i] + "から" + titles[i] + "があります。"
-	
+
 		#なかった場合、一番近いものを持ってくる
 		else:
 			df_filtered = df[df['地区'].isin([place_query])]
@@ -155,7 +155,7 @@ def event_search():
 				for j in range(1,len(date_list)):
 					#datetimeに変換
 					dt_format = datetime.datetime.strptime(date_list[j],'%Y年%m月%d日')
-					
+
 					if dt_format_query < dt_format:
 						df_filtered = df_filtered[df_filtered['日付'].isin([date_list[j]])]
 						Founded = True
@@ -180,7 +180,7 @@ def event_search():
 			#日付が見つからなかった場合
 			else:
 				text = 'しばらく、指定した地区ではイベントはありません。ホームページの更新をお待ちください。'
-	
+
 	#テキストを加工する。かっこが入っているものを消す
 	try:
 		text = text.replace('(いまいずみだい)','')
@@ -194,10 +194,10 @@ def event_search():
 		text = text.replace('町内会館','ちょーなぃかぃかん')
 	except:
 		pass
-	
+
 	r = make_response(jsonify({'speech':text,'displayText':text,'data':{'google':{'expect_user_response':False,'no_input_prompts':[],'is_ssml':False}}}))
 	r.headers['Content-Type'] = 'application/json'
-	
+
 	return r
 
 
