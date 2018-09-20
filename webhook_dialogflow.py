@@ -28,7 +28,7 @@ app = Flask(__name__)
 @app.route('/',methods=['GET'])
 def index():
     return 'Hello World!'
-
+"""
 @app.route('/event_search', methods=['POST'])
 def event_search():
 	req = request.get_json(silent=True, force=True)
@@ -201,7 +201,7 @@ def event_search():
 	r.headers['Content-Type'] = 'application/json'
 	
 	return r
-
+"""
 if __name__ == '__main__':
     app.run(debug=False, port=80, host='0.0.0.0')
 
